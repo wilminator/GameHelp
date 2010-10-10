@@ -87,6 +87,19 @@ void get_external_center(layout* object) {
 }
 
 /*
+Priority manipulation
+Provides control over how manipulating dimensions is handled.
+*/
+void set_vertial_priority(layout* object, unsigned int flags) {
+    // Limit the flag bits to appropriate vaules.
+    flags &= LAYOUT_VERICAL_MASK;
+    // Zero affected flag bits in the object.
+    object->flags &= ~LAYOUT_VERICAL_MASK;
+    // Merge the new flag settings into the object.
+    object->flags |= flags;
+}
+
+/*
 Child Manipulation
 Provides functions used to interface children objects with their parents.
 */
@@ -103,18 +116,15 @@ void detach_child(layout* parent, layout* child) {
         child
     } else {
         while (index->next != child) {
-            /*
-            The end of the linked list is null.
-            Exit the function if the index becomed null.
-            */
+            // The end of the linked list is null.
+            // Exit the function if the index becomed null.
             if (!index) return;
-            /*
-            Advance to the next item in the list.
-            */
+            // Advance to the next item in the list.
             index = index-> next;
         }
         index->next = child->next;
     }
+    // Zero the (former) child's linking variables.
     child->parent = NULL;
     child->next = NULL;
 }

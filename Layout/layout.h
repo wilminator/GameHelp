@@ -5,10 +5,13 @@
 #define LAYOUT_MIDDLE   (1<<1)
 #define LAYOUT_BOTTOM   (1<<2)
 #define LAYOUT_HEIGHT   (1<<3)
+#define LAYOUT_VERTIAL_MASK     (LAYOUT_TOP | LAYOUT_MIDDLE | LAYOUT_BOTTOM | LAYOUT_HEIGHT)
+
 #define LAYOUT_LEFT     (1<<4)
 #define LAYOUT_CENTER   (1<<5)
 #define LAYOUT_RIGHT    (1<<6)
 #define LAYOUT_WIDTH    (1<<7)
+#define LAYOUT_HORIZONTAL_MASK  (LAYOUT_LEFT | LAYOUT_CENTER | LAYOUT_RIGHT | LAYOUT_WIDTH)
 
 struct dimension {
     float top;
