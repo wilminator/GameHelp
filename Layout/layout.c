@@ -18,85 +18,221 @@ void delete_layout(layout* object) {
 Internal dimensions- describes this object's internal coordinate system.
 Child objects are positioned relatively based on these parameters.
 */
-void get_internal_top(layout* object) {
-    return object->internal.top;
+float get_internal_top(layout* object) {
+    return get_top(object->internal);
 }
 
-void get_internal_bottom(layout* object) {
-    return object->internal.bottom;
+float get_internal_bottom(layout* object) {
+    return get_bottom(object->internal);
 }
 
-void get_internal_width(layout* object) {
-    return fabs(object->internal.top - object->internal.bottom);
+float get_internal_height(layout* object) {
+    return get_height(object->internal);
 }
 
-void get_internal_middle(layout* object) {
-    return (object->internal.top + object->internal.bottom) / 2.0;
+float get_internal_middle(layout* object) {
+    return get_middle(object->internal);
 }
 
-void get_internal_left(layout* object) {
-    return object->internal.left;
+float get_internal_left(layout* object) {
+    return get_left(object->internal);
 }
 
-void get_internal_right(layout* object) {
-    return object->internal.right;
+float get_internal_right(layout* object) {
+    return get_right(object->internal);
 }
 
-void get_internal_width(layout* object) {
-    return fabs(object->internal.left - object->internal.right);
+float get_internal_width(layout* object) {
+    return get_width(object->internal);
 }
 
-void get_internal_center(layout* object) {
-    return (object->internal.left + object->internal.right) / 2.0;
+float get_internal_center(layout* object) {
+    return get_center(object->internal);
 }
 
 /*
 External dimensions- describes this object's position and size
 relative to its parent's coordinate system
 */
-void get_external_top(layout* object) {
-    return object->external.top;
+float get_external_top(layout* object) {
+    return get_top(object->external);
 }
 
-void get_external_bottom(layout* object) {
-    return object->external.bottom;
+float get_external_bottom(layout* object) {
+    return get_bottom(object->external);
 }
 
-void get_external_width(layout* object) {
-    return fabs(object->external.top - object->external.bottom);
+float get_external_height(layout* object) {
+    return get_height(object->external);
 }
 
-void get_external_middle(layout* object) {
-    return (object->external.top + object->external.bottom) / 2.0;
+float get_external_middle(layout* object) {
+    return get_middle(object->external);
 }
 
-void get_external_left(layout* object) {
-    return object->external.left;
+float get_external_left(layout* object) {
+    return get_left(object->external);
 }
 
-void get_external_right(layout* object) {
-    return object->external.right;
+float get_external_right(layout* object) {
+    return get_right(object->external);
 }
 
-void get_external_width(layout* object) {
-    return fabs(object->external.left - object->external.right);
+float get_external_width(layout* object) {
+    return get_width(object->external);
 }
 
-void get_external_center(layout* object) {
-    return (object->external.left + object->external.right) / 2.0;
+float get_external_center(layout* object) {
+    return get_center(object->external);
 }
 
 /*
-Priority manipulation
-Provides control over how manipulating dimensions is handled.
+Internal dimension manipulation
+These functions change the internal dimension values for this object.
+The appropriate priorty flags are used to determine which values are
+actually modified when setting a value.
+
+Note that the coordinate system is completely arbitrary.  This means that
+you can have increasing y values mean further down from the top of the screen
+(traditional 2D rendering coordinate system) or increasing y values mean
+further up on the screen (traditional mathematical cartesian coordinates).  As
+fair warning, this means that the top value can acceptably be greater or less
+than the bottom value.
 */
-void set_vertial_priority(layout* object, unsigned int flags) {
-    // Limit the flag bits to appropriate vaules.
-    flags &= LAYOUT_VERICAL_MASK;
-    // Zero affected flag bits in the object.
-    object->flags &= ~LAYOUT_VERICAL_MASK;
-    // Merge the new flag settings into the object.
-    object->flags |= flags;
+void set_internal_top(layout* object, float value, unsigned int priority = LAYOUT_HEIGHT) {
+    switch (priority) {
+        case LAYOUT_MIDDLE: // Keep the middle of this object constant.
+            int middle = (object->internal.top + object->internal.bottom) / 2.0;
+            object->internal.bottom = middle * 2 - value
+            break;
+        case LAYOUT_BOTTOM: // Keep the bottom of this object constant.
+            //Do nothing.
+            break;
+        default: // Including LAYOUT_HEIGHT,
+                 // keep the height of this object constant
+            float height = object->bottom - object->internal.top;
+            object->internal.bottom = value + height;
+    }
+    object->internal.top = value;
+}
+
+void set_internal_bottom(layout* object, float value, unsigned int priority = LAYOUT_HEIGHT) {
+    switch (priority) {
+        case LAYOUT_MIDDLE: // Keep the middle of this object constant.
+            int middle = (object->internal.bottom + object->internal.top) / 2.0;
+            object->internal.top = middle * 2 - value
+            break;
+        case LAYOUT_TOP: // Keep the top of this object constant.
+            //Do nothing.
+            break;
+        default: // Including LAYOUT_HEIGHT,
+                 // keep the height of this object constant
+            float height = object->internal.bottom - object->internal.top;
+            object->internal.bottom = value - height;
+    }
+    object->internal.bottom = value;
+}
+
+void set_internal_height(layout* object, float value, unsigned int priority = LAYOUT_MIDDLE) {
+    // If top is less than bottom, then normal is value, else normal is -value.
+    float normal = (get_internal_top(object) < get_internal_bottom(object)) ? value : -value;
+    switch (priority) {
+        case LAYOUT_TOP: // Keep the top of this object constant.
+            object->internal.bottom = object->internal.top + value
+            break;
+        case LAYOUT_BOTTOM: // Keep the bottom of this object constant.
+            object->internal.top = object->internal.bottom - value
+            break;
+        default: // Including LAYOUT_MIDDLE,
+                 // keep the middle of this object constant
+            int middle = get_internal_middle(object);
+            object->internal.top = middle - value / 2.0;
+            object->internal.bottom = middle + value / 2.0;
+    }
+}
+
+void set_internal_middle(layout* object, float value, unsigned int priority = LAYOUT_HEIGHT) {
+    switch (priority) {
+        case LAYOUT_TOP: // Keep the top of this object constant.
+            object->internal.bottom = value * 2.0 - object->internal.top;
+            break;
+        case LAYOUT_BOTTOM: // Keep the bottom of this object constant.
+            object->internal.top = value * 2.0 - object->internal.bottom;
+            break;
+        default: // Including LAYOUT_HEIGHT,
+                 // keep the height of this object constant
+            int height = object->internal.bottom - object->internal.top;
+            object->internal.top = value - height / 2.0;
+            object->internal.bottom = value + height / 2.0;
+    }
+}
+
+void set_internal_left(layout* object, float value, unsigned int priority = LAYOUT_WIDTH) {
+    switch (priority) {
+        case LAYOUT_CENTER: // Keep the center of this object constant.
+            int center = (object->internal.left + object->internal.right) / 2.0;
+            object->internal.right = center * 2 - value
+            break;
+        case LAYOUT_RIGHT: // Keep the right of this object constant.
+            //Do nothing.
+            break;
+        default: // Including LAYOUT_WIDTH,
+                 // keep the width of this object constant
+            float width = object->right - object->internal.left;
+            object->internal.right = value + width;
+    }
+    object->internal.left = value;
+}
+
+void set_internal_right(layout* object, float value, unsigned int priority = LAYOUT_WIDTH) {
+    switch (priority) {
+        case LAYOUT_CENTER: // Keep the middle of this object constant.
+            int center = (object->internal.right + object->internal.left) / 2.0;
+            object->internal.left = center * 2 - value
+            break;
+        case LAYOUT_LEFT: // Keep the left of this object constant.
+            //Do nothing.
+            break;
+        default: // Including LAYOUT_WIDTH,
+                 // keep the width of this object constant
+            float width = object->internal.right - object->internal.left;
+            object->internal.right = value - width;
+    }
+    object->internal.right = value;
+}
+
+void set_internal_width(layout* object, float value, unsigned int priority = LAYOUT_CENTER) {
+    // If left is less than right, then normal is value, else normal is -value.
+    float normal = (get_internal_left(object) < get_internal_right(object)) ? value : -value;
+    switch (priority) {
+        case LAYOUT_LEFT: // Keep the left of this object constant.
+            object->internal.right = object->internal.left + value
+            break;
+        case LAYOUT_RIGHT: // Keep the right of this object constant.
+            object->internal.left = object->internal.right - value
+            break;
+        default: // Including LAYOUT_CENTER,
+                 // keep the center of this object constant
+            int center = get_internal_center(object);
+            object->internal.left = center - value / 2.0;
+            object->internal.right = center + value / 2.0;
+    }
+}
+
+void set_internal_center(layout* object, float value, unsigned int priority = LAYOUT_WIDTH) {
+    switch (priority) {
+        case LAYOUT_LEFT: // Keep the left of this object constant.
+            object->internal.right = value * 2.0 - object->internal.left;
+            break;
+        case LAYOUT_RIGHT: // Keep the right of this object constant.
+            object->internal.left = value * 2.0 - object->internal.right;
+            break;
+        default: // Including LAYOUT_WIDTH,
+                 // keep the width of this object constant
+            int width = object->internal.right - object->internal.left;
+            object->internal.left = value - width / 2.0;
+            object->internal.right = value + width / 2.0;
+    }
 }
 
 /*
