@@ -28,6 +28,4 @@ struct layout{
     void* renderable;
 };
 
-
-
 #endif // __LAYOUT_H__

@@ -32,22 +32,22 @@ struct dimension {
 
 typedef struct dimension dimension;
 
-float get_top(dimension* object);
-float get_bottom(dimension* object);
-float get_height(dimension* object);
-float get_middle(dimension* object);
-float get_left(dimension* object);
-float get_right(dimension* object);
-float get_width(dimension* object);
-float get_center(dimension* object);
+const float get_top(const dimension* object);
+const float get_bottom(const dimension* object);
+const float get_height(const dimension* object);
+const float get_middle(const dimension* object);
+const float get_left(const dimension* object);
+const float get_right(const dimension* object);
+const float get_width(const dimension* object);
+const float get_center(const dimension* object);
 
-void set_top(dimension* object, float value, unsigned int priority);
-void set_bottom(dimension* object, float value, unsigned int priority);
-void set_height(dimension* object, float value, unsigned int priority);
-void set_middle(dimension* object, float value, unsigned int priority);
-void set_left(dimension* object, float value, unsigned int priority);
-void set_right(dimension* object, float value, unsigned int priority);
-void set_width(dimension* object, float value, unsigned int priority);
-void set_center(dimension* object, float value, unsigned int priority);
+void set_top(dimension* object, const float value, const unsigned int priority);
+void set_bottom(dimension* object, const float value, const unsigned int priority);
+void set_height(dimension* object, const float value, const unsigned int priority);
+void set_middle(dimension* object, const float value, const unsigned int priority);
+void set_left(dimension* object, const float value, const unsigned int priority);
+void set_right(dimension* object, const float value, const unsigned int priority);
+void set_width(dimension* object, const float value, const unsigned int priority);
+void set_center(dimension* object, const float value, const unsigned int priority);
 
 #endif // __DIMENSION_H__

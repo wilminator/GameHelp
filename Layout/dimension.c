@@ -1,55 +1,55 @@
 #include "dimension.h"
 #include <math.h>
 
-float get_minimal(axis* object) {
+const float get_minimal(const axis* object) {
     return object->minimal;
 }
 
-float get_maximal(axis* object) {
+const float get_maximal(const axis* object) {
     return object->maximal;
 }
 
-float get_length(axis* object) {
+const float get_length(const axis* object) {
     return fabs(object->maximal - object->minimal);
 }
 
-float get_median(axis* object){
+const float get_median(const axis* object){
     return (object->minimal + object->maximal) / 2.0;
 }
 
-float get_top(dimension* object) {
+const float get_top(const dimension* object) {
     return get_minimal(&object->vertical);
 }
 
-float get_bottom(dimension* object) {
+const float get_bottom(const dimension* object) {
     return get_maximal(&object->vertical);
 }
 
-float get_height(dimension* object) {
+const float get_height(const dimension* object) {
     return get_length(&object->vertical);
 }
 
-float get_middle(dimension* object) {
+const float get_middle(const dimension* object) {
     return get_median(&object->vertical);
 }
 
-float get_left(dimension* object) {
+const float get_left(const dimension* object) {
     return get_minimal(&object->horizontal);
 }
 
-float get_right(dimension* object) {
+const float get_right(const dimension* object) {
     return get_maximal(&object->horizontal);
 }
 
-float get_width(dimension* object) {
+const float get_width(const dimension* object) {
     return get_length(&object->horizontal);
 }
 
-float get_center(dimension* object) {
+const float get_center(const dimension* object) {
     return get_median(&object->horizontal);
 }
 
-void set_minimal(axis* object, float value, unsigned int priority) {
+void set_minimal(axis* object, const float value, const unsigned int priority) {
     switch (priority) {
         case AXIS_MEDIAN: // Keep the median of this object constant.
             /*
@@ -72,7 +72,7 @@ void set_minimal(axis* object, float value, unsigned int priority) {
     object->minimal = value;
 }
 
-void set_maximal(axis* object, float value, unsigned int priority) {
+void set_maximal(axis* object, const float value, const unsigned int priority) {
     switch (priority) {
         case AXIS_MEDIAN: // Keep the median of this object constant.
             /*
@@ -95,7 +95,7 @@ void set_maximal(axis* object, float value, unsigned int priority) {
     object->maximal = value;
 }
 
-void set_length(axis* object, float value, unsigned int priority) {
+void set_length(axis* object, const float value, const unsigned int priority) {
     // If minimal is less than maximal, then normal is value, else normal is -value.
     float normal = (get_minimal(object) < get_maximal(object)) ? value : -value;
     switch (priority) {
@@ -115,7 +115,7 @@ void set_length(axis* object, float value, unsigned int priority) {
     }
 }
 
-void set_median(axis* object, float value, unsigned int priority) {
+void set_median(axis* object, const float value, const unsigned int priority) {
     switch (priority) {
         case AXIS_MINIMAL: // Keep the minimal of this object constant.
             object->maximal = value * 2.0 - get_minimal(object);
@@ -133,35 +133,35 @@ void set_median(axis* object, float value, unsigned int priority) {
     }
 }
 
-void set_top(dimension* object, float value, unsigned int priority) {
+void set_top(dimension* object, const float value, const unsigned int priority) {
     set_minimal(&object->vertical, value, priority);
 }
 
-void set_bottom(dimension* object, float value, unsigned int priority) {
+void set_bottom(dimension* object, const float value, const unsigned int priority) {
     set_maximal(&object->vertical, value, priority);
 }
 
-void set_height(dimension* object, float value, unsigned int priority) {
+void set_height(dimension* object, const float value, const unsigned int priority) {
     set_length(&object->vertical, value, priority);
 }
 
-void set_middle(dimension* object, float value, unsigned int priority) {
+void set_middle(dimension* object, const float value, const unsigned int priority) {
     set_median(&object->vertical, value, priority);
 }
 
-void set_left(dimension* object, float value, unsigned int priority) {
+void set_left(dimension* object, const float value, const unsigned int priority) {
     set_minimal(&object->horizontal, value, priority);
 }
 
-void set_right(dimension* object, float value, unsigned int priority) {
+void set_right(dimension* object, const float value, const unsigned int priority) {
     set_maximal(&object->horizontal, value, priority);
 }
 
-void set_width(dimension* object, float value, unsigned int priority) {
+void set_width(dimension* object, const float value, const unsigned int priority) {
     set_length(&object->horizontal, value, priority);
 }
 
-void set_center(dimension* object, float value, unsigned int priority) {
+void set_center(dimension* object, const float value, const unsigned int priority) {
     set_median(&object->horizontal, value, priority);
 }
 
